@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* JSC brand palette — see CLAUDE.md "Brand & Design System" (STRICT, do not deviate) */
+    --color-primary: 229 49% 29%; /* #26336E */
+    --color-primary-light: 228 41% 39%; /* #3A4A8C */
+    --color-primary-dark: 228 51% 21%; /* #1A2550 */
+    --color-primary-foreground: 0 0% 100%;
+
+    --color-solidaire: 43 35% 39%; /* #857140 — Solidaire pole only */
+    --color-after-mass: 194 58% 59%; /* #5BB8D4 — After Mass pole only */
+
+    --color-accent: 43 80% 46%; /* #D4A017 — liturgical highlights only */
+    --color-accent-foreground: 0 0% 100%;
+
+    --color-background: 60 23% 97%; /* #FAFAF7 */
+    --color-surface: 43 23% 94%; /* #F3F1EC */
+    --color-border: 43 15% 88%;
+
+    --color-text-primary: 240 28% 14%; /* #1A1A2E */
+    --color-text-muted: 240 9% 46%; /* #6B6B80 */
+
+    --font-heading: "Cormorant Garamond", serif;
+    --font-body: "Inter", sans-serif;
+  }
+
+  [data-theme="dark"] {
+    --color-primary: 228 41% 39%;
+    --color-primary-light: 228 55% 52%;
+    --color-primary-dark: 229 49% 29%;
+    --color-primary-foreground: 0 0% 100%;
+
+    --color-solidaire: 43 35% 55%;
+    --color-after-mass: 194 58% 65%;
+
+    --color-accent: 43 80% 58%;
+    --color-accent-foreground: 228 51% 12%;
+
+    --color-background: 228 30% 9%;
+    --color-surface: 228 24% 14%;
+    --color-border: 228 18% 22%;
+
+    --color-text-primary: 60 23% 96%;
+    --color-text-muted: 228 12% 68%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: hsl(var(--color-background));
+    color: hsl(var(--color-text-primary));
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    color: hsl(var(--color-text-primary));
+  }
+}
