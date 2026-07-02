@@ -38,9 +38,8 @@ export function PoleSection({ pole, index }: PoleSectionProps) {
   return (
     <section id={pole.slug} className={`scroll-mt-40 py-20 ${background}`}>
       <Reveal
-        className={`container flex flex-col gap-10 lg:gap-16 ${
-          imageFirst ? "lg:flex-row" : "lg:flex-row-reverse"
-        }`}
+        className={`container flex flex-col gap-10 lg:gap-16 ${imageFirst ? "lg:flex-row" : "lg:flex-row-reverse"
+          }`}
       >
         <div className="relative w-full lg:w-2/5">
           <div
@@ -59,23 +58,20 @@ export function PoleSection({ pole, index }: PoleSectionProps) {
 
         <div className="flex flex-col justify-center lg:w-3/5">
           <h2
-            className={`font-heading text-3xl font-semibold sm:text-4xl ${
-              isDark ? "text-primary-foreground" : "text-foreground"
-            }`}
+            className={`font-heading text-3xl font-semibold sm:text-4xl ${isDark ? "text-primary-foreground" : "text-foreground"
+              }`}
           >
             {pole.name}
           </h2>
           <p
-            className={`mt-2 text-sm font-medium ${
-              isDark ? "text-white/70" : "text-foreground-muted"
-            }`}
+            className={`mt-2 text-sm font-medium ${isDark ? "text-white/70" : "text-foreground-muted"
+              }`}
           >
             Responsable : {pole.responsible}
           </p>
           <p
-            className={`mt-6 max-w-2xl ${
-              isDark ? "text-white/90" : "text-foreground-muted"
-            }`}
+            className={`mt-6 max-w-2xl ${isDark ? "text-white/90" : "text-foreground-muted"
+              }`}
           >
             {pole.mission}
           </p>
@@ -84,11 +80,10 @@ export function PoleSection({ pole, index }: PoleSectionProps) {
             {pole.activities.map((activity) => (
               <li
                 key={activity}
-                className={`rounded-full border px-3 py-1 text-sm ${
-                  isDark
+                className={`rounded-full border px-3 py-1 text-sm ${isDark
                     ? "border-white/30 text-white/90"
                     : "border-border text-foreground-muted"
-                }`}
+                  }`}
               >
                 {activity}
               </li>
@@ -98,9 +93,8 @@ export function PoleSection({ pole, index }: PoleSectionProps) {
           <Button
             asChild
             size="lg"
-            className={`mt-8 w-fit ${
-              isDark ? "bg-white text-primary hover:bg-white/90" : ""
-            }`}
+            className={`mt-8 w-fit ${isDark ? "bg-white text-primary hover:bg-white/90" : ""
+              }`}
           >
             <Link href={`/rejoindre?pole=${pole.slug}`}>
               Rejoindre ce pôle

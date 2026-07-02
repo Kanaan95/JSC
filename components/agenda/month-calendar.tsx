@@ -117,18 +117,16 @@ export function MonthCalendar({
               key={day.toISOString()}
               type="button"
               onClick={() => onSelectDay(isSelected ? null : day)}
-              className={`flex min-h-16 flex-col items-start gap-1 rounded-md border p-1 text-left transition-colors sm:min-h-24 sm:p-1.5 ${
-                isSelected
+              className={`flex min-h-16 flex-col items-start gap-1 rounded-md border p-1 text-left transition-colors sm:min-h-24 sm:p-1.5 ${isSelected
                   ? "border-primary bg-background ring-2 ring-primary ring-offset-1 ring-offset-surface"
                   : "border-border/70 hover:border-primary/40 hover:bg-background"
-              }`}
+                }`}
             >
               <span
-                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
-                  isToday
+                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${isToday
                     ? "bg-primary text-primary-foreground"
                     : "text-foreground"
-                }`}
+                  }`}
               >
                 {day.getDate()}
               </span>
@@ -136,18 +134,16 @@ export function MonthCalendar({
                 {dayEvents.slice(0, VISIBLE_CHIPS).map((event) => (
                   <span
                     key={event.slug}
-                    className={`hidden truncate rounded px-1 py-0.5 text-left text-[0.65rem] leading-tight sm:block ${
-                      CATEGORY_META[event.category].badgeClass
-                    }`}
+                    className={`hidden truncate rounded px-1 py-0.5 text-left text-[0.65rem] leading-tight sm:block ${CATEGORY_META[event.category].badgeClass
+                      }`}
                   >
                     {event.title}
                   </span>
                 ))}
                 {dayEvents.length > 0 && (
                   <span
-                    className={`h-1 w-1 rounded-full sm:hidden ${
-                      CATEGORY_META[dayEvents[0]!.category].dotClass
-                    }`}
+                    className={`h-1 w-1 rounded-full sm:hidden ${CATEGORY_META[dayEvents[0]!.category].dotClass
+                      }`}
                   />
                 )}
                 {overflowCount > 0 && (
