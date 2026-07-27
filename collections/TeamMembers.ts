@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
 
@@ -16,6 +17,20 @@ export const TeamMembers: CollectionConfig = {
     create: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
     update: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
     delete: ({ req: { user } }) => checkRole(["super-admin"], user),
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidatePath("/qui-sommes-nous");
+        revalidatePath("/nos-poles");
+      },
+    ],
+    afterDelete: [
+      () => {
+        revalidatePath("/qui-sommes-nous");
+        revalidatePath("/nos-poles");
+      },
+    ],
   },
   fields: [
     {

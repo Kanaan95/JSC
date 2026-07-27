@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
 
@@ -7,6 +8,15 @@ export const SiteSettings: GlobalConfig = {
   access: {
     read: () => true,
     update: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        // Logo/social links/whatsapp number appear in the header and
+        // footer on every page.
+        revalidatePath("/", "layout");
+      },
+    ],
   },
   fields: [
     {

@@ -1,11 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { RichText } from "@payloadcms/richtext-lexical/react";
 
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
-import { POLES } from "@/lib/constants";
-
-type Pole = (typeof POLES)[number];
+import type { PoleDoc } from "@/lib/payload-types";
 
 const BG_CYCLE = [
   "bg-background",
@@ -14,18 +13,18 @@ const BG_CYCLE = [
   "bg-primary",
 ] as const;
 
-const BG_OVERRIDE: Partial<Record<Pole["slug"], string>> = {
+const BG_OVERRIDE: Partial<Record<string, string>> = {
   solidaire: "bg-solidaire/10",
   "after-mass": "bg-after-mass/10",
 };
 
-const GLOW_OVERRIDE: Partial<Record<Pole["slug"], string>> = {
+const GLOW_OVERRIDE: Partial<Record<string, string>> = {
   solidaire: "bg-solidaire/40",
   "after-mass": "bg-after-mass/40",
 };
 
 interface PoleSectionProps {
-  pole: Pole;
+  pole: PoleDoc;
   index: number;
 }
 
@@ -34,6 +33,13 @@ export function PoleSection({ pole, index }: PoleSectionProps) {
   const isDark = background === "bg-primary";
   const imageFirst = index % 2 === 0;
   const glow = GLOW_OVERRIDE[pole.slug] ?? (isDark ? "bg-white/20" : "bg-primary/20");
+  const logoUrl =
+    typeof pole.logo === "object" && pole.logo ? pole.logo.url : null;
+  const responsable =
+    typeof pole.responsable === "object" && pole.responsable
+      ? pole.responsable.name
+      : null;
+  const activities = pole.activities?.map((item) => item.activity) ?? [];
 
   return (
     <section id={pole.slug} className={`scroll-mt-40 py-20 ${background}`}>
@@ -46,14 +52,16 @@ export function PoleSection({ pole, index }: PoleSectionProps) {
             aria-hidden
             className={`absolute inset-6 -z-10 rounded-full blur-3xl ${glow}`}
           />
-          <div className="relative aspect-square w-full overflow-hidden rounded-lg shadow-2xl shadow-black/30">
-            <Image
-              src={pole.logo}
-              alt={`Logo du pôle ${pole.name}`}
-              fill
-              className="object-cover"
-            />
-          </div>
+          {logoUrl ? (
+            <div className="relative aspect-square w-full overflow-hidden rounded-lg shadow-2xl shadow-black/30">
+              <Image
+                src={logoUrl}
+                alt={`Logo du pôle ${pole.name}`}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ) : null}
         </div>
 
         <div className="flex flex-col justify-center lg:w-3/5">
@@ -63,21 +71,25 @@ export function PoleSection({ pole, index }: PoleSectionProps) {
           >
             {pole.name}
           </h2>
-          <p
-            className={`mt-2 text-sm font-medium ${isDark ? "text-white/70" : "text-foreground-muted"
-              }`}
-          >
-            Responsable : {pole.responsible}
-          </p>
-          <p
-            className={`mt-6 max-w-2xl ${isDark ? "text-white/90" : "text-foreground-muted"
-              }`}
-          >
-            {pole.mission}
-          </p>
+          {responsable ? (
+            <p
+              className={`mt-2 text-sm font-medium ${isDark ? "text-white/70" : "text-foreground-muted"
+                }`}
+            >
+              Responsable : {responsable}
+            </p>
+          ) : null}
+          {pole.mission ? (
+            <div
+              className={`mt-6 max-w-2xl ${isDark ? "text-white/90" : "text-foreground-muted"
+                }`}
+            >
+              <RichText data={pole.mission} disableContainer />
+            </div>
+          ) : null}
 
           <ul className="mt-6 flex flex-wrap gap-2">
-            {pole.activities.map((activity) => (
+            {activities.map((activity) => (
               <li
                 key={activity}
                 className={`rounded-full border px-3 py-1 text-sm ${isDark

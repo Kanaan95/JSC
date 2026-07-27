@@ -3,6 +3,11 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { SITE_NAME } from "@/lib/constants";
+import { getPayloadClient } from "@/lib/payload";
+import type {
+  FooterSettingsGlobal,
+  SiteSettingsGlobal,
+} from "@/lib/payload-types";
 import "./globals.css";
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -31,17 +36,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const payload = await getPayloadClient();
+  const [siteSettings, footerSettings] = await Promise.all([
+    payload.findGlobal({ slug: "site-settings" }) as Promise<SiteSettingsGlobal>,
+    payload.findGlobal({ slug: "footer-settings" }) as Promise<FooterSettingsGlobal>,
+  ]);
+
   return (
     <html lang="fr" className={`${cormorantGaramond.variable} ${inter.variable}`}>
       <body className="flex min-h-screen flex-col font-body">
         <Header />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <Footer siteSettings={siteSettings} footerSettings={footerSettings} />
       </body>
     </html>
   );

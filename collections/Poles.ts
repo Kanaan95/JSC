@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
 import { slugify } from "../lib/utils";
@@ -14,6 +15,22 @@ export const Poles: CollectionConfig = {
     create: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
     update: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
     delete: ({ req: { user } }) => checkRole(["super-admin"], user),
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidatePath("/nos-poles");
+        revalidatePath("/");
+        revalidatePath("/rejoindre");
+      },
+    ],
+    afterDelete: [
+      () => {
+        revalidatePath("/nos-poles");
+        revalidatePath("/");
+        revalidatePath("/rejoindre");
+      },
+    ],
   },
   fields: [
     {

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
 import { slugify } from "../lib/utils";
@@ -16,6 +17,20 @@ export const Events: CollectionConfig = {
     create: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
     update: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
     delete: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidatePath("/agenda");
+        revalidatePath("/");
+      },
+    ],
+    afterDelete: [
+      () => {
+        revalidatePath("/agenda");
+        revalidatePath("/");
+      },
+    ],
   },
   fields: [
     {
@@ -75,9 +90,12 @@ export const Events: CollectionConfig = {
       type: "select",
       required: true,
       options: [
-        { label: "Prière", value: "prayer" },
+        { label: "Spirituel", value: "spirituel" },
         { label: "Social", value: "social" },
-        { label: "Caritatif", value: "charity" },
+        { label: "Culturel", value: "culturel" },
+        { label: "Sportif", value: "sportif" },
+        { label: "Humanitaire", value: "humanitaire" },
+        { label: "After Mass", value: "after-mass" },
       ],
     },
     {

@@ -24,3 +24,39 @@ export function slugify(value: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+interface LexicalNode {
+  type?: string;
+  text?: string;
+  children?: LexicalNode[];
+}
+
+/**
+ * Extracts plain text from a Payload/Lexical richText JSON value.
+ * Used where an existing component only accepts a plain string.
+ */
+export function richTextToPlainText(value: unknown): string {
+  if (!value || typeof value !== "object") {
+    return "";
+  }
+
+  const root = (value as { root?: LexicalNode }).root;
+
+  if (!root) {
+    return "";
+  }
+
+  const collect = (node: LexicalNode): string => {
+    if (typeof node.text === "string") {
+      return node.text;
+    }
+
+    if (!node.children) {
+      return "";
+    }
+
+    return node.children.map(collect).join(node.type === "paragraph" ? " " : "");
+  };
+
+  return collect(root).replace(/\s+/g, " ").trim();
+}

@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
 
@@ -7,6 +8,13 @@ export const FooterSettings: GlobalConfig = {
   access: {
     read: () => true,
     update: ({ req: { user } }) => checkRole(["super-admin", "editor"], user),
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidatePath("/", "layout");
+      },
+    ],
   },
   fields: [
     {

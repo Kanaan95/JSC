@@ -8,7 +8,12 @@ import { Button } from "@/components/ui/button";
 
 const HERO_IMAGE_PATH = "/assets/images/hero.jpg";
 
-export function Hero() {
+interface HeroProps {
+  heroTitle?: string | null;
+  heroSubtitle?: string | null;
+}
+
+export function Hero({ heroTitle, heroSubtitle }: HeroProps = {}) {
   const hasHeroImage = fs.existsSync(
     path.join(process.cwd(), "public", HERO_IMAGE_PATH)
   );
@@ -51,12 +56,12 @@ export function Hero() {
         </div>
 
         <h1 className="max-w-3xl animate-in fade-in slide-in-from-bottom-6 font-heading text-4xl font-semibold text-white duration-700 delay-150 sm:text-5xl lg:text-6xl">
-          Jeunes Maronites de Nice, unis dans la foi de Saint Charbel
+          {heroTitle ||
+            "Jeunes Maronites de Nice, unis dans la foi de Saint Charbel"}
         </h1>
         <p className="max-w-xl animate-in fade-in slide-in-from-bottom-6 text-base text-white/90 duration-700 delay-300 sm:text-lg">
-          Rassembler les jeunes et les accompagner vers une relation vivante
-          avec Jésus-Christ, à travers une communauté fraternelle, dynamique
-          et structurée.
+          {heroSubtitle ||
+            "Rassembler les jeunes et les accompagner vers une relation vivante avec Jésus-Christ, à travers une communauté fraternelle, dynamique et structurée."}
         </p>
         <div className="mt-4 flex w-full animate-in fade-in slide-in-from-bottom-6 flex-col gap-4 duration-700 delay-500 sm:w-auto sm:flex-row">
           <Button

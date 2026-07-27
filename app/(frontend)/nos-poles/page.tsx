@@ -4,9 +4,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
-import { PoleMobileTabs, PoleSideNav } from "@/components/nos-poles/pole-nav";
+import { PoleMobileTabs } from "@/components/nos-poles/pole-nav";
 import { PoleSection } from "@/components/nos-poles/pole-section";
-import { POLES } from "@/lib/constants";
+import { getPayloadClient } from "@/lib/payload";
+import type { PoleDoc } from "@/lib/payload-types";
 
 export const metadata: Metadata = {
   title: "Nos pôles",
@@ -14,7 +15,14 @@ export const metadata: Metadata = {
     "Les 8 axes d'action de la Jeunesse Saint Charbel Nice : spirituel, solidaire, culturel, sportif, social, humanitaire, animation et after mass.",
 };
 
-export default function NosPolesPage() {
+export default async function NosPolesPage() {
+  const payload = await getPayloadClient();
+  const { docs: poles } = (await payload.find({
+    collection: "poles",
+    depth: 1,
+    limit: 100,
+  })) as unknown as { docs: PoleDoc[] };
+
   return (
     <>
       <PageHero
@@ -24,10 +32,10 @@ export default function NosPolesPage() {
         decorativeAlt=""
       />
 
-      <PoleMobileTabs />
+      <PoleMobileTabs poles={poles} />
 
 
-      {POLES.map((pole, index) => (
+      {poles.map((pole, index) => (
         <PoleSection key={pole.slug} pole={pole} index={index} />
       ))}
 

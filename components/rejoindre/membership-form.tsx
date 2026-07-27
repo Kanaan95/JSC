@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { POLES } from "@/lib/constants";
+import type { PoleDoc } from "@/lib/payload-types";
 
 const membershipSchema = z.object({
   firstName: z.string().trim().min(1, "Le prénom est requis."),
@@ -34,11 +34,13 @@ type MembershipFormInput = z.input<typeof membershipSchema>;
 type MembershipFormOutput = z.output<typeof membershipSchema>;
 
 interface MembershipFormProps {
+  poles: PoleDoc[];
   defaultPole?: string;
   defaultMessage?: string;
 }
 
 export function MembershipForm({
+  poles,
   defaultPole,
   defaultMessage,
 }: MembershipFormProps) {
@@ -178,7 +180,7 @@ export function MembershipForm({
           Pôle d&apos;intérêt
         </legend>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {POLES.map((pole) => (
+          {poles.map((pole) => (
             <label
               key={pole.slug}
               htmlFor={`pole-${pole.slug}`}
