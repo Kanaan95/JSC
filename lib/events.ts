@@ -62,6 +62,9 @@ export function getEventDateRange(event: CommunityEvent): {
   return { start, end };
 }
 
-export function isPastEvent(event: CommunityEvent, now: Date = new Date()): boolean {
+export function isPastEvent(
+  event: CommunityEvent,
+  now: Date = new Date(),
+): boolean {
   return getEventDateRange(event).end.getTime() < now.getTime();
 }

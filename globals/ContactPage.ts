@@ -1,7 +1,7 @@
 import type { GlobalConfig } from "payload";
-import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
+import { safeRevalidatePath } from "../lib/revalidate";
 
 export const ContactPage: GlobalConfig = {
   slug: "contact-page",
@@ -11,8 +11,8 @@ export const ContactPage: GlobalConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
-        revalidatePath("/rejoindre");
+      async () => {
+        await safeRevalidatePath("/rejoindre");
       },
     ],
   },

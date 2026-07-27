@@ -38,17 +38,17 @@ export function Footer({ siteSettings, footerSettings }: FooterProps) {
   const socialLinks =
     siteSettings?.socialLinks && siteSettings.socialLinks.length > 0
       ? siteSettings.socialLinks.map((link) => ({
-          href: link.url,
-          label: PLATFORM_ICON[link.platform] ?? link.platform,
-        }))
+        href: link.url,
+        label: PLATFORM_ICON[link.platform] ?? link.platform,
+      }))
       : SOCIAL_LINKS;
 
   const legalLinks =
     footerSettings?.legalLinks && footerSettings.legalLinks.length > 0
       ? footerSettings.legalLinks.map((link) => ({
-          href: link.url,
-          label: link.label,
-        }))
+        href: link.url,
+        label: link.label,
+      }))
       : LEGAL_LINKS;
 
   return (

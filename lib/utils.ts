@@ -55,7 +55,9 @@ export function richTextToPlainText(value: unknown): string {
       return "";
     }
 
-    return node.children.map(collect).join(node.type === "paragraph" ? " " : "");
+    return node.children
+      .map(collect)
+      .join(node.type === "paragraph" ? " " : "");
   };
 
   return collect(root).replace(/\s+/g, " ").trim();

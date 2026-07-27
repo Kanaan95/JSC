@@ -1,7 +1,7 @@
 import type { GlobalConfig } from "payload";
-import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
+import { safeRevalidatePath } from "../lib/revalidate";
 
 export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
@@ -11,10 +11,10 @@ export const SiteSettings: GlobalConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
+      async () => {
         // Logo/social links/whatsapp number appear in the header and
         // footer on every page.
-        revalidatePath("/", "layout");
+        await safeRevalidatePath("/", "layout");
       },
     ],
   },

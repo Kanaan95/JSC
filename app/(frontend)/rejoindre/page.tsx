@@ -50,13 +50,13 @@ export default async function RejoindrePage({
       }) as unknown as Promise<{ docs: PoleDoc[] }>,
       eventSlug
         ? payload
-            .find({
-              collection: "events",
-              where: { slug: { equals: eventSlug } },
-              limit: 1,
-              depth: 0,
-            })
-            .then((result) => result.docs[0] ?? null)
+          .find({
+            collection: "events",
+            where: { slug: { equals: eventSlug } },
+            limit: 1,
+            depth: 0,
+          })
+          .then((result) => result.docs[0] ?? null)
         : Promise.resolve(null),
     ]);
 

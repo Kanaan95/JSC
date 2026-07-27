@@ -59,8 +59,7 @@ export interface HomepageGlobal {
   heroSubtitle?: string | null;
   monthlyQuote?: RichTextValue;
   ctaButtons?:
-    | { label: string; url: string; style: "primary" | "secondary" }[]
-    | null;
+    { label: string; url: string; style: "primary" | "secondary" }[] | null;
 }
 
 export interface ContactPageGlobal {

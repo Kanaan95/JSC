@@ -33,12 +33,12 @@ function toCommunityEvent(event: EventDoc): CommunityEvent {
 
   const durationMinutes = event.endDate
     ? Math.max(
-        15,
-        Math.round(
-          (new Date(event.endDate).getTime() - new Date(event.date).getTime()) /
-            60000
-        )
+      15,
+      Math.round(
+        (new Date(event.endDate).getTime() - new Date(event.date).getTime()) /
+        60000
       )
+    )
     : DEFAULT_DURATION_MINUTES;
 
   return {

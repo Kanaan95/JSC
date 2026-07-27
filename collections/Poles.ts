@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
-import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
+import { safeRevalidatePath } from "../lib/revalidate";
 import { slugify } from "../lib/utils";
 
 export const Poles: CollectionConfig = {
@@ -18,17 +18,17 @@ export const Poles: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
-        revalidatePath("/nos-poles");
-        revalidatePath("/");
-        revalidatePath("/rejoindre");
+      async () => {
+        await safeRevalidatePath("/nos-poles");
+        await safeRevalidatePath("/");
+        await safeRevalidatePath("/rejoindre");
       },
     ],
     afterDelete: [
-      () => {
-        revalidatePath("/nos-poles");
-        revalidatePath("/");
-        revalidatePath("/rejoindre");
+      async () => {
+        await safeRevalidatePath("/nos-poles");
+        await safeRevalidatePath("/");
+        await safeRevalidatePath("/rejoindre");
       },
     ],
   },

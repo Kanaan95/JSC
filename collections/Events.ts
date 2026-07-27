@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
-import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
+import { safeRevalidatePath } from "../lib/revalidate";
 import { slugify } from "../lib/utils";
 
 export const Events: CollectionConfig = {
@@ -20,15 +20,15 @@ export const Events: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
-        revalidatePath("/agenda");
-        revalidatePath("/");
+      async () => {
+        await safeRevalidatePath("/agenda");
+        await safeRevalidatePath("/");
       },
     ],
     afterDelete: [
-      () => {
-        revalidatePath("/agenda");
-        revalidatePath("/");
+      async () => {
+        await safeRevalidatePath("/agenda");
+        await safeRevalidatePath("/");
       },
     ],
   },

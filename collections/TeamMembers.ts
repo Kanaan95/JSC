@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
-import { revalidatePath } from "next/cache";
 
 import { checkRole } from "../access/checkRole";
+import { safeRevalidatePath } from "../lib/revalidate";
 
 export const TeamMembers: CollectionConfig = {
   slug: "team-members",
@@ -20,15 +20,15 @@ export const TeamMembers: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
-        revalidatePath("/qui-sommes-nous");
-        revalidatePath("/nos-poles");
+      async () => {
+        await safeRevalidatePath("/qui-sommes-nous");
+        await safeRevalidatePath("/nos-poles");
       },
     ],
     afterDelete: [
-      () => {
-        revalidatePath("/qui-sommes-nous");
-        revalidatePath("/nos-poles");
+      async () => {
+        await safeRevalidatePath("/qui-sommes-nous");
+        await safeRevalidatePath("/nos-poles");
       },
     ],
   },

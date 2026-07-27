@@ -93,8 +93,8 @@ export function PoleSection({ pole, index }: PoleSectionProps) {
               <li
                 key={activity}
                 className={`rounded-full border px-3 py-1 text-sm ${isDark
-                    ? "border-white/30 text-white/90"
-                    : "border-border text-foreground-muted"
+                  ? "border-white/30 text-white/90"
+                  : "border-border text-foreground-muted"
                   }`}
               >
                 {activity}
