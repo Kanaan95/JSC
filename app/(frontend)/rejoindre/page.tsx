@@ -17,14 +17,21 @@ export const metadata: Metadata = {
 };
 
 interface RejoindrePageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function RejoindrePage({ searchParams }: RejoindrePageProps) {
+export default async function RejoindrePage({
+  searchParams,
+}: RejoindrePageProps) {
+  const resolvedSearchParams = await searchParams;
   const poleSlug =
-    typeof searchParams.pole === "string" ? searchParams.pole : undefined;
+    typeof resolvedSearchParams.pole === "string"
+      ? resolvedSearchParams.pole
+      : undefined;
   const eventSlug =
-    typeof searchParams.event === "string" ? searchParams.event : undefined;
+    typeof resolvedSearchParams.event === "string"
+      ? resolvedSearchParams.event
+      : undefined;
 
   const defaultPole = POLES.find((pole) => pole.slug === poleSlug)?.slug;
   const matchedEvent = EVENTS.find((event) => event.slug === eventSlug);

@@ -275,3 +275,67 @@ Include:
 - Strong emphasis on readability
 - Warm, reverent tone
 - Avoid sensational or overly dramatic miracle storytelling
+
+***
+
+## Payload CMS Integration (Added 2026-07-27)
+
+### Why Payload CMS
+JSC Nice website needs non-technical admins to edit content (events, team members,
+poles, blog posts) without code changes. Payload CMS 3 installs directly into the
+existing Next.js app rather than requiring a separate server, keeping the stack simple.
+
+### Stack additions
+- Payload CMS 3 (installed inside the existing Next.js 15+ app)
+- PostgreSQL 16 (via Docker Compose for local dev)
+- Payload Local API for server-side data fetching in Next.js Server Components
+
+### Prerequisite
+Next.js must be on version 15 or higher before installing Payload 3.
+If the project is currently on Next.js 14, upgrade first.
+
+### Content Model
+
+#### Globals (single-instance content)
+- `SiteSettings` — logo, socialLinks[], whatsappNumber, primaryColor
+- `Homepage` — heroTitle, heroSubtitle, monthlyQuote, ctaButtons[]
+- `ContactPage` — address, formIntroText, mapEmbedUrl
+- `FooterSettings` — footerText, legalLinks[]
+
+#### Collections (repeatable content)
+- `Users` — auth-enabled. Field `role` (select): super-admin | editor | content-manager
+- `Events` — title, slug, date, endDate, location, category (priere/social/caritatif),
+  description (richText), image (upload), registrationLink, featured (checkbox)
+- `TeamMembers` — name, role, pole (relationship→Poles), photo (upload), bio (richText), order (number)
+- `Poles` — name, slug, mission (richText), responsable (relationship→TeamMembers),
+  logo (upload), activities (array of text), color
+- `Posts` — title, slug, excerpt, content (richText), coverImage (upload),
+  publishedDate, author (relationship→TeamMembers)
+- `Media` — standard Payload upload collection, alt text required
+
+Note: Saint Charbel page remains a static page (content changes rarely).
+Revisit only if the team requests frequent edits to that page.
+
+### Access Control / Roles
+
+| Role | Read | Create | Update | Delete |
+|---|---|---|---|---|
+| super-admin | All | All | All | All |
+| editor | All | Events, Posts, TeamMembers | Events, Posts, TeamMembers | Events, Posts |
+| content-manager | All | Posts only | Own posts only | Own posts only |
+
+Implement via a reusable `checkRole.ts` utility in `/access` — do not duplicate
+access logic across collection configs.
+
+### Data Flow
+- Frontend pages (Homepage, Qui sommes-nous, Pôles, Agenda, Contact) fetch content
+  via Payload's Local API inside Next.js Server Components.
+- Use on-demand revalidation so published changes go live without a full redeploy.
+- Real content (9 poles, team members, sample events) is seeded via a seed script,
+  not entered manually on first launch.
+
+### Local Development
+- `docker-compose.yml` provides a Postgres 16 service.
+- `.env.example` documents `DATABASE_URI` and `PAYLOAD_SECRET`.
+- Admin panel is available at `/admin` inside the existing Next.js app — no separate
+  deployment or subdomain required.
