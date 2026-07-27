@@ -8,6 +8,9 @@
 # production
 /build
 
+# payload local uploads
+/media
+
 # misc
 .DS_Store
 *.pem
