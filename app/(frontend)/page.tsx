@@ -25,7 +25,7 @@ export default async function HomePage() {
     }) as unknown as Promise<{ docs: EventDoc[] }>,
     payload.find({
       collection: "poles",
-      limit: 4,
+      limit: 100,
       depth: 1,
     }) as unknown as Promise<{ docs: PoleDoc[] }>,
   ]);
