@@ -11,6 +11,10 @@ import { Poles } from "./collections/Poles";
 import { TeamMembers } from "./collections/TeamMembers";
 import { Events } from "./collections/Events";
 import { Posts } from "./collections/Posts";
+import { SiteSettings } from "./globals/SiteSettings";
+import { Homepage } from "./globals/Homepage";
+import { ContactPage } from "./globals/ContactPage";
+import { FooterSettings } from "./globals/FooterSettings";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -23,6 +27,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Poles, TeamMembers, Events, Posts],
+  globals: [SiteSettings, Homepage, ContactPage, FooterSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
