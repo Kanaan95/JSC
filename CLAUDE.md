@@ -52,23 +52,36 @@ Construire une communauté ancrée dans la foi chrétienne, enracinée dans la t
 
 ## Tech Stack
 
-- **Framework:** Next.js 14 with App Router and TypeScript
+- **Framework:** Next.js 15 (App Router) + React 19 + TypeScript
+- **CMS:** Payload CMS 3 embedded in the Next.js app (admin at `/admin`), Lexical rich text
+- **Database:** PostgreSQL 16 via `@payloadcms/db-postgres` (Docker Compose for local dev)
 - **Styling:** Tailwind CSS v3
-- **Components:** shadcn/ui
-- **Content:** MDX for blog/articles
-- **Deployment:** Static-first, Vercel or Netlify ready
-- **Forms:** Netlify Forms or Resend (no backend required for MVP)
+- **Components:** shadcn/ui (Radix primitives) in `components/ui`
+- **Forms:** react-hook-form + zod
+- **Images:** `sharp` (Payload Media generates thumbnail/card/hero sizes)
+- **Deployment:** Vercel or Netlify ready; needs a reachable Postgres and `PAYLOAD_SECRET`
+
+> MDX is **not** used. Blog content (Phase 2) will come from the Payload `Posts` collection.
 
 ***
 
 ## Project Structure
 
 ```
-/app                    → Next.js App Router pages
-/components             → reusable UI components
+/app/(frontend)         → public site pages + layout (French content)
+/app/(payload)          → Payload admin (/admin) and API routes — do not put site pages here
+/access                 → checkRole.ts — the only place role logic lives
+/collections            → Payload collections (Events, Media, Poles, Posts, TeamMembers, Users)
+/globals                → Payload globals (ContactPage, FooterSettings, Homepage, SiteSettings)
+/components             → UI components grouped by page (home, agenda, nos-poles, qui-sommes-nous,
+                          rejoindre, saint-charbel, layout, icons, admin)
 /components/ui          → shadcn/ui base components
-/lib                    → utilities and shared logic
-/content                → MDX content files (blog, team bios, poles)
+/lib                    → constants, payload client, event status, ICS export, revalidation,
+                          seed data, generated payload-types.ts
+/scripts/seed.mjs       → `npm run seed` orchestrator: starts `next dev` if needed and POSTs /api/seed
+                          (logic in lib/seed.ts, route in app/(payload)/api/seed)
+/media                  → Payload uploads (local storage)
+/docs                   → source documents (cahier des charges, présentation)
 /public/assets/logos    → all JSC logo variants (see Asset Inventory below)
 /public/assets/poles    → axe/pole logo PNGs (see Asset Inventory below)
 /public/assets/images   → community photos and hero images
@@ -114,34 +127,55 @@ Construire une communauté ancrée dans la foi chrétienne, enracinée dans la t
 
 ### Main Logos (use appropriate variant per context)
 
-| File                                          | Description                               | Use when                        |
-| --------------------------------------------- | ----------------------------------------- | ------------------------------- |
-| `Logo-JSC-complet-marine-fond-blanc.jpg`      | Full logo (boat+JSC+text), navy on white  | Main logo, footer, about page   |
-| `JSC-Nice-marine-transparent.jpg`             | "JSC NICE" wordmark, navy, transparent bg | Light backgrounds               |
-| `JSC-Nice-blanc-fond-marine.jpg`              | "JSC NICE" wordmark, white on navy        | Dark/navy backgrounds           |
-| `barque-blanche-transparent.jpg`              | Boat icon only, white, transparent bg     | Small icon use on dark bg       |
-| `barque-blanche-JSC-texte-transparent.jpg`    | Boat + JSC text, white, transparent bg    | Hero overlays                   |
-| `comite-marine-transparent.jpg`               | "JSC COMITÉ" lockup, navy                 | Comité/team section             |
-| `flamme-croix-marine-transparent.jpg`         | Flame+cross icon, navy, transparent bg    | Favicon, small icon on light bg |
-| `flamme-croix-blanche-transparent.jpg`        | Flame+cross icon, white, transparent bg   | Small icon on dark bg           |
-| `flamme-croix-blanc-fond-marine-12.svg`       | SVG flame+cross, white on navy            | Scalable icon on navy bg        |
-| `flamme-croix-marine-fond-transparent-14.svg` | SVG flame+cross, navy, transparent        | Scalable icon on light bg       |
-| `flamme-croix-blanc-fond-transparent-13.svg`  | SVG flame+cross, white, transparent       | Scalable icon on any dark bg    |
+All files live in `public/assets/logos/` — lowercase, hyphenated names.
+
+| File                                                    | Description                                | Use when                        |
+| ------------------------------------------------------- | ------------------------------------------ | ------------------------------- |
+| `logo-complet-marine-fond-blanc.jpg`                    | Full logo (boat+JSC+text), navy on white   | Main logo, about page           |
+| `logo-complet-marine-fond-transparent.svg`              | Full logo, navy, transparent               | Light backgrounds (scalable)    |
+| `logo-complet-blanc-fond-marine.png` / `.svg`           | Full logo, white on navy                   | Dark/navy backgrounds           |
+| `logo-complet-blanc-fond-transparent.svg`               | Full logo, white, transparent              | Any dark background             |
+| `logo-jsc-blanc-fond-marine.png` / `.svg`               | JSC logo, white on navy                    | Dark/navy backgrounds           |
+| `logo-jsc-blanc-fond-transparent.svg`                   | JSC logo, white, transparent               | Any dark background             |
+| `logo-jsc-marine-fond-transparent.svg`                  | JSC logo, navy, transparent                | Light backgrounds               |
+| `logo-marine-transparent.png`                           | Logo, navy, transparent                    | Light backgrounds               |
+| `jsc-nice-marine-transparent.png`                       | "JSC NICE" wordmark, navy, transparent     | Light backgrounds               |
+| `jsc-nice-blanc-fond-marine.png`                        | "JSC NICE" wordmark, white on navy         | Dark/navy backgrounds           |
+| `barque-blanche-transparent.png`                        | Boat icon only, white, transparent         | Small icon on dark bg           |
+| `barque-blanche-jsc-texte-transparent.png`              | Boat + JSC text, white, transparent        | Hero overlays                   |
+| `comite-marine-transparent.png`                         | "JSC COMITÉ" lockup, navy                  | Comité/team section             |
+| `comite-blanc-fond-marine.png`                          | "JSC COMITÉ" lockup, white on navy         | Comité on dark bg               |
+| `flamme-croix-marine-transparent.png`                   | Flame+cross, navy, transparent             | Favicon, small icon on light bg |
+| `flamme-croix-blanche-transparent.png`                  | Flame+cross, white, transparent            | Small icon on dark bg           |
+| `flamme-croix-blanc-fond-marine.svg`                    | SVG flame+cross, white on navy             | Scalable icon on navy bg        |
+| `flamme-croix-marine-fond-transparent.svg`              | SVG flame+cross, navy, transparent         | Scalable icon on light bg       |
+| `flamme-croix-blanc-fond-transparent.svg`               | SVG flame+cross, white, transparent        | Scalable icon on any dark bg    |
+| `croix-blanche-transparent.png`                         | Cross only, white, transparent             | Small accent on dark bg         |
 
 ### Pole / Axe Logos
 
-| Axe         | File                  |
-| ----------- | --------------------- |
-| Spirituel   | `spirituel logo.png`  |
-| Solidaire   | `solidaire logo.png`  |
-| After Mass  | `after mass logo.png` |
-| Culturel    | `culture logo.png`    |
-| Sportif     | `sport logo.png`      |
-| Social      | `social logo.png`     |
-| Humanitaire | `humain logo.png`     |
-| Animation   | `animation logo.png`  |
+Files live in `public/assets/poles/`. On the site, a pôle's logo is rendered from its
+`logo` upload (Media) in the CMS — the seed does **not** upload them, so an admin must
+attach the logo to each pôle (or the UI shows its fallback).
 
-> **Note:** Poles marked ⚠️ are missing dedicated logos. Use the flame+cross as a placeholder and add a TODO comment. Replace when assets are provided.
+| Axe                  | File                       |
+| -------------------- | -------------------------- |
+| Spirituel            | `spirituel-logo.png`       |
+| Solidaire            | `solidaire-logo.png`       |
+| After Mass           | `after-mass-logo.png`      |
+| Culturel & Artistique| `culture-logo.png`         |
+| Sportif              | `sport-logo.png`           |
+| Social               | `social-logo.png`          |
+| Humanitaire          | `humain-logo.png`          |
+| Animation            | `animation-logo.png`       |
+| Chorale (no pôle yet)| `chorale-logo.png`         |
+| Finance (no pôle yet)| `finance-logo.png`         |
+| Fishing (no pôle yet)| `fishing-logo.png`         |
+| Logistique (no pôle yet) | `logistique-logo.png`  |
+| Médias (no pôle yet) | `medias-logo.png`          |
+| Relations publiques (no pôle yet) | `relations-pub-logo.png` |
+
+> **Note:** Logos marked "no pôle yet" exist as assets but are not seeded as pôles. Never substitute a generic icon for a pôle; if a pôle has no logo, use the flame+cross as a placeholder until the asset is attached.
 
 ### Asset Path Convention
 All assets must be referenced as:
@@ -151,53 +185,54 @@ All assets must be referenced as:
 /assets/images/[filename]     → photos and hero images
 ```
 
-Copy all provided files into the correct subfolder before starting development.
-
 ***
 
-## Pages (MVP — build in this order)
+## Pages
 
-1. **Accueil** — Hero, intro, pôles preview, upcoming event, join CTA, footer
-2. **Qui sommes-nous** — Identity, mission, vision, values, team, Saint Charbel intro
-3. **Nos pôles** — All axes with their dedicated logos (see Asset Inventory)
-4. **Agenda** — Filterable event calendar (spiritual / social / cultural / sport / humanitarian)
-5. **Rejoindre / Contact** — Membership form, WhatsApp CTA, map of Nice
+### Built (MVP) — all fed by Payload where noted
+1. **Accueil** `/` — Hero, intro, pôles preview, upcoming event, monthly quote, join CTA (Payload: Homepage, Events, Poles)
+2. **Qui sommes-nous** `/qui-sommes-nous` — Identity, mission, vision, values, team, Saint Charbel intro (Payload: TeamMembers)
+3. **Nos pôles** `/nos-poles` — All axes with their dedicated logos. **Hidden unless `SiteSettings.polesSectionEnabled` is checked** (page, nav links, homepage teaser and the pôle choice in the join form)
+4. **Agenda** `/agenda` — Filterable event calendar (month view, category filter, "add to calendar" ICS export). Only `published` events are public
+5. **Rejoindre / Contact** `/rejoindre` — Membership form, WhatsApp CTA, newsletter signup, map of Nice
+6. **Saint Charbel** `/saint-charbel` — static page (see "Additional MVP / Priority Page")
+7. **Mentions légales** `/mentions-legales` and **Confidentialité** `/confidentialite`
 
-## Pages (Phase 2 — after MVP)
-6. Saint Charbel & saints maronites
-7. Médiathèque (photo gallery by event)
-8. Blog / Actualités
-9. Faire un don
-10. FAQ
-11. Demande de prière / Mur d'intentions
-12. Calendrier liturgique maronite
+### Phase 2 — not built yet
+- Saints maronites (other than Saint Charbel)
+- Médiathèque (photo gallery by event)
+- Blog / Actualités (`Posts` collection already exists)
+- Faire un don
+- FAQ
+- Demande de prière / Mur d'intentions
+- Calendrier liturgique maronite
 
 ***
 
 ## Axes d'action (Poles content)
 
-**Spirituel** | Logo: `spirituel logo.png` | Responsables: Laura Azar / Rita Francis
+**Spirituel** | Logo: `spirituel-logo.png` | Responsables: Laura Azar / Rita Francis
 Messes des jeunes, soirées de prière/adoration, témoignages, retraites, pèlerinages, tables rondes Évangile, catéchisme, messes maronito-latines, prière tournante
 
-**Solidaire** | Logo: `solidaire logo.png` | Responsable: Eleonora Abi Rached
+**Solidaire** | Logo: `solidaire-logo.png` | Responsable: Eleonora Abi Rached
 Système de parrainage, entraide (emploi, logement, déménagement)
 
-**Culturel & Artistique** | Logo: `culture logo.png` | Responsable: Evelyne Helo
+**Culturel & Artistique** | Logo: `culture-logo.png` | Responsable: Evelyne Helo
 Traditions libanaises, événements interculturels Orient/Occident, cinéma, concerts, ateliers (musique, cuisine, art), cours de langue libanaise/chant/piano
 
-**Sportif** | Logo: `sport logo.png` | Responsable: Elie Habre
+**Sportif** | Logo: `sport-logo.png` | Responsable: Elie Habre
 Randonnées, compétitions (foot, basket, volley), santé physique, jeux de boules, karting, paintball
 
-**Social** | Logo: `social logo.png` | Responsable: Peter Daoura
+**Social** | Logo: `social-logo.png` | Responsable: Peter Daoura
 Dîners tournants, pique-niques, soirées d'intégration, aide aux étudiants étrangers, after mass, Noël/Nouvel An
 
-**Humanitaire** | Logo: `humain logo.png` | Responsable: Elias Bou Ghosn
+**Humanitaire** | Logo: `humain-logo.png` | Responsable: Elias Bou Ghosn
 Visites EHPAD/orphelinat/SDF, collectes de dons, rencontres inter-paroisses
 
-**Animation** | Logo: `animation logo.png` | Responsable: Clara Antoinetta Elias
+**Animation** | Logo: `animation-logo.png` | Responsable: Clara Antoinetta Elias
 Chasse aux œufs, photobooth, décoration de bougies, spécialités libanaises (blé de la Sainte Barbe, maamoul de Pâques)
 
-**After Mass** | Logo: `after mass logo.jpg` | Responsable: (see team)
+**After Mass** | Logo: `after-mass-logo.png` | Responsable: (see team)
 Accueil café/thé après la messe, goûters, discussions, rencontre des nouveaux paroissiens
 
 ***
@@ -205,9 +240,13 @@ Accueil café/thé après la messe, goûters, discussions, rencontre des nouveau
 ## Commands
 
 ```bash
-npm run dev         # start dev server on port 3000
-npm run build       # production build
-npm run lint        # ESLint check
+docker compose up -d postgres  # local Postgres 16
+npm run dev                    # start dev server on port 3000 (admin at /admin)
+npm run build                  # production build
+npm run lint                   # ESLint check
+npm run seed                   # idempotent seed of real content (reads .env)
+npm run generate:types         # regenerate lib/payload-types.ts after changing collections/globals
+npm run generate:importmap     # regenerate admin importMap after adding admin components
 npx shadcn-ui@latest add [component]
 ```
 
@@ -271,64 +310,91 @@ Include:
 
 ***
 
-## Payload CMS Integration (Added 2026-07-27)
+## Payload CMS Integration (integrated; last synced with code 2026-10-30)
 
 ### Why Payload CMS
 JSC Nice website needs non-technical admins to edit content (events, team members,
 poles, blog posts) without code changes. Payload CMS 3 installs directly into the
 existing Next.js app rather than requiring a separate server, keeping the stack simple.
 
-### Stack additions
-- Payload CMS 3 (installed inside the existing Next.js 15+ app)
+### Stack
+- Payload CMS 3 installed inside the Next.js 15 app (admin at `/admin`)
 - PostgreSQL 16 (via Docker Compose for local dev)
-- Payload Local API for server-side data fetching in Next.js Server Components
-
-### Prerequisite
-Next.js must be on version 15 or higher before installing Payload 3.
-If the project is currently on Next.js 14, upgrade first.
+- Payload Local API (`getPayloadClient()` in `lib/payload.ts`) for server-side fetching in Server Components
+- `lib/payload-types.ts` is generated — run `npm run generate:types` after any schema change, never edit by hand
 
 ### Content Model
 
 #### Globals (single-instance content)
-- `SiteSettings` — logo, socialLinks[], whatsappNumber, primaryColor
-- `Homepage` — heroTitle, heroSubtitle, monthlyQuote, ctaButtons[]
+- `SiteSettings` (`site-settings`) — logo, socialLinks[] (instagram/facebook/whatsapp/tiktok/youtube),
+  whatsappNumber, primaryColor, `polesSectionEnabled` (checkbox, default **false**)
+- `Homepage` — heroTitle, heroSubtitle, monthlyQuote, ctaButtons[] (label, url, style primary|secondary)
 - `ContactPage` — address, formIntroText, mapEmbedUrl
-- `FooterSettings` — footerText, legalLinks[]
+- `FooterSettings` (`footer-settings`) — footerText, legalLinks[]
+
+Globals are publicly readable; update is limited to `super-admin` and `editor` and triggers revalidation.
 
 #### Collections (repeatable content)
-- `Users` — auth-enabled. Field `role` (select): super-admin | editor | content-manager
-- `Events` — title, slug, date, endDate, location, category (priere/social/caritatif),
-  description (richText), image (upload), registrationLink, featured (checkbox)
+- `Users` — auth-enabled. Field `role` (select): super-admin | editor | content-manager (default `editor`).
+  Only a super-admin can change a role.
+- `Events` — title, slug, date, endDate, location,
+  category (`spirituel` | `social` | `culturel` | `sportif` | `humanitaire` | `after-mass`),
+  description (richText), image (upload), registrationLink, featured (checkbox, shown on homepage),
+  `status` (`draft` | `in_discussion` | `published`), `statusHistory` (read-only audit trail)
 - `TeamMembers` — name, role, pole (relationship→Poles), photo (upload), bio (richText), order (number)
 - `Poles` — name, slug, mission (richText), responsable (relationship→TeamMembers),
   logo (upload), activities (array of text), color
 - `Posts` — title, slug, excerpt, content (richText), coverImage (upload),
-  publishedDate, author (relationship→TeamMembers)
-- `Media` — standard Payload upload collection, alt text required
+  publishedDate, author (relationship→TeamMembers — public byline), `status` (draft/published),
+  `createdBy` (the CMS user, set automatically, used for "own posts" access)
+- `Media` — upload collection, alt text required, generates `thumbnail`, `card` and `hero` sizes
 
 Note: Saint Charbel page remains a static page (content changes rarely).
 Revisit only if the team requests frequent edits to that page.
 
+### Event Status Workflow
+- New events are **always** created as `draft` (any client-sent status is ignored).
+- Public/unauthenticated reads only return `published` events; staff see all statuses in the admin.
+- `content-manager` can never move an event to `published` (blocked in both field access and a hook with an explicit French error).
+- Only `super-admin` and `editor` can publish.
+- Every status change appends to `statusHistory` (date, from, to, changedBy); the history is rebuilt server-side, so client values are ignored.
+- Status labels/badge colors live in `lib/event-status.ts` — reuse `EVENT_STATUS_OPTIONS` / `EVENT_STATUS_BADGES`, don't redefine them.
+
 ### Access Control / Roles
 
-| Role            | Read | Create                     | Update                     | Delete         |
-| --------------- | ---- | -------------------------- | -------------------------- | -------------- |
-| super-admin     | All  | All                        | All                        | All            |
-| editor          | All  | Events, Posts, TeamMembers | Events, Posts, TeamMembers | Events, Posts  |
-| content-manager | All  | Posts only                 | Own posts only             | Own posts only |
+| Role            | Read                                     | Create                                         | Update                                     | Delete                       |
+| --------------- | ---------------------------------------- | ---------------------------------------------- | ------------------------------------------ | ---------------------------- |
+| super-admin     | All                                      | All                                            | All                                        | All                          |
+| editor          | All                                      | Events, Posts, TeamMembers, Poles, Media       | Events, Posts, TeamMembers, Poles, Media   | Events, Posts, Media         |
+| content-manager | All (Events/Posts: all statuses in admin)| Events (draft only), Posts, Media              | Events (never to `published`), own Posts, Media | Media only             |
 
-Implement via a reusable `checkRole.ts` utility in `/access` — do not duplicate
+Public (no login): Poles, TeamMembers, Media and globals are readable; Events and Posts only when `published`.
+Deleting Poles and TeamMembers is super-admin only. Events deletion is limited to super-admin and editor.
+
+Implement via the reusable `checkRole.ts` utility in `/access` — do not duplicate
 access logic across collection configs.
+
+> If you change a collection's access rules, update this table in the same change.
 
 ### Data Flow
 - Frontend pages (Homepage, Qui sommes-nous, Pôles, Agenda, Contact) fetch content
   via Payload's Local API inside Next.js Server Components.
-- Use on-demand revalidation so published changes go live without a full redeploy.
-- Real content (9 poles, team members, sample events) is seeded via a seed script,
-  not entered manually on first launch.
+- Collection/global `afterChange` hooks call `safeRevalidatePath` (`lib/revalidate.ts`) so published
+  changes go live without a full redeploy. It no-ops outside a Next.js context (e.g. seed).
+- **Pôles toggle:** `getPolesSectionEnabled()` (`lib/site-settings.ts`) gates the Nos pôles page,
+  nav links (`getNavLinks()` in `lib/constants.ts`), homepage teaser and the join-form pôle choice.
+  Null/unset counts as hidden.
+- `lib/constants.ts` still holds fallback/static values (nav, legal links, contact info, social links).
+  Its `CONTACT` and WhatsApp URLs contain **TODO placeholders** to replace before launch.
+- Real content (8 pôles, team members, sample events) is seeded via `npm run seed`, not entered
+  manually on first launch. The seed is idempotent (lookup by slug/name, update in place) and does
+  **not** upload pôle logos.
 
 ### Local Development
-- `docker-compose.yml` provides a Postgres 16 service.
-- `.env.example` documents `DATABASE_URI` and `PAYLOAD_SECRET`.
+- `docker compose up -d postgres` starts Postgres 16 (db `jsc-main`, user/password `postgres`).
+- Copy `.env.example` to `.env` and set `DATABASE_URI` and `PAYLOAD_SECRET`
+  (`openssl rand -base64 32`). `PAYLOAD_SECRET` also authenticates the `/api/seed` route.
 - Admin panel is available at `/admin` inside the existing Next.js app — no separate
   deployment or subdomain required.
+- Custom admin components (e.g. `components/admin/status-cell.tsx`) must be registered in the
+  Payload import map — run `npm run generate:importmap` after adding one.
