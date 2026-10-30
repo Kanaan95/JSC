@@ -6,8 +6,8 @@ import { RichText } from "@payloadcms/richtext-lexical/react";
 import { SOCIAL_ICON_MAP } from "@/components/icons/social-icons";
 import {
   CONTACT,
+  getNavLinks,
   LEGAL_LINKS,
-  NAV_LINKS,
   SITE_NAME,
   SOCIAL_LINKS,
 } from "@/lib/constants";
@@ -27,9 +27,14 @@ const PLATFORM_ICON: Record<string, keyof typeof SOCIAL_ICON_MAP> = {
 interface FooterProps {
   siteSettings?: SiteSettingsGlobal;
   footerSettings?: FooterSettingsGlobal;
+  polesSectionEnabled: boolean;
 }
 
-export function Footer({ siteSettings, footerSettings }: FooterProps) {
+export function Footer({
+  siteSettings,
+  footerSettings,
+  polesSectionEnabled,
+}: FooterProps) {
   const logoUrl =
     typeof siteSettings?.logo === "object" && siteSettings.logo
       ? siteSettings.logo.url
@@ -78,7 +83,7 @@ export function Footer({ siteSettings, footerSettings }: FooterProps) {
           <h2 className="font-heading text-lg font-semibold text-white">
             Navigation
           </h2>
-          {NAV_LINKS.map((link) => (
+          {getNavLinks(polesSectionEnabled).map((link) => (
             <Link
               key={link.href}
               href={link.href}

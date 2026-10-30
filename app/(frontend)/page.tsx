@@ -10,11 +10,12 @@ import type {
   HomepageGlobal,
   PoleDoc,
 } from "@/lib/payload-types";
+import { getPolesSectionEnabled } from "@/lib/site-settings";
 
 export default async function HomePage() {
   const payload = await getPayloadClient();
 
-  const [homepage, featuredEvents, poles] = await Promise.all([
+  const [homepage, featuredEvents, polesSectionEnabled] = await Promise.all([
     payload.findGlobal({ slug: "homepage" }) as Promise<HomepageGlobal>,
     payload.find({
       collection: "events",
@@ -26,12 +27,16 @@ export default async function HomePage() {
       limit: 1,
       depth: 0,
     }) as unknown as Promise<{ docs: EventDoc[] }>,
-    payload.find({
+    getPolesSectionEnabled(),
+  ]);
+
+  const poles = polesSectionEnabled
+    ? ((await payload.find({
       collection: "poles",
       limit: 100,
       depth: 1,
-    }) as unknown as Promise<{ docs: PoleDoc[] }>,
-  ]);
+    })) as unknown as { docs: PoleDoc[] })
+    : null;
 
   return (
     <>
@@ -41,7 +46,7 @@ export default async function HomePage() {
       />
       <EventBanner event={featuredEvents.docs[0] ?? null} />
       <CommunityIntro />
-      <PolesPreview poles={poles.docs} />
+      {poles ? <PolesPreview poles={poles.docs} /> : null}
       <JoinCta />
       <MonthlyQuote quote={homepage.monthlyQuote} />
     </>

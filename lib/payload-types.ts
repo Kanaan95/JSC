@@ -81,6 +81,7 @@ export interface SiteSettingsGlobal {
     | null;
   whatsappNumber?: string | null;
   primaryColor?: string | null;
+  polesSectionEnabled?: boolean | null;
 }
 
 export interface FooterSettingsGlobal {

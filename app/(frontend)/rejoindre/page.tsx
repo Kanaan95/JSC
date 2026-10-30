@@ -39,31 +39,34 @@ export default async function RejoindrePage({
       : undefined;
 
   const payload = await getPayloadClient();
-  const [contactPage, siteSettings, polesResult, matchedEvent] =
-    await Promise.all([
-      payload.findGlobal({ slug: "contact-page" }) as Promise<ContactPageGlobal>,
-      payload.findGlobal({ slug: "site-settings" }) as Promise<SiteSettingsGlobal>,
-      payload.find({
+  const [contactPage, siteSettings, matchedEvent] = await Promise.all([
+    payload.findGlobal({ slug: "contact-page" }) as Promise<ContactPageGlobal>,
+    payload.findGlobal({ slug: "site-settings" }) as Promise<SiteSettingsGlobal>,
+    eventSlug
+      ? payload
+        .find({
+          collection: "events",
+          where: {
+            slug: { equals: eventSlug },
+            status: { equals: "published" },
+          },
+          limit: 1,
+          depth: 0,
+        })
+        .then((result) => result.docs[0] ?? null)
+      : Promise.resolve(null),
+  ]);
+
+  const polesSectionEnabled = siteSettings.polesSectionEnabled === true;
+  const poles = polesSectionEnabled
+    ? ((
+      (await payload.find({
         collection: "poles",
         limit: 100,
         depth: 0,
-      }) as unknown as Promise<{ docs: PoleDoc[] }>,
-      eventSlug
-        ? payload
-          .find({
-            collection: "events",
-            where: {
-              slug: { equals: eventSlug },
-              status: { equals: "published" },
-            },
-            limit: 1,
-            depth: 0,
-          })
-          .then((result) => result.docs[0] ?? null)
-        : Promise.resolve(null),
-    ]);
-
-  const poles = polesResult.docs;
+      })) as unknown as { docs: PoleDoc[] }
+    ).docs)
+    : [];
   const defaultPole = poles.find((pole) => pole.slug === poleSlug)?.slug;
   const defaultMessage = matchedEvent
     ? `Je souhaite m'inscrire à : ${matchedEvent.title}`

@@ -56,5 +56,15 @@ export const SiteSettings: GlobalConfig = {
       type: "text",
       defaultValue: "#26336E",
     },
+    {
+      name: "polesSectionEnabled",
+      type: "checkbox",
+      defaultValue: false,
+      label: 'Show the "Nos pôles" section on the public website',
+      admin: {
+        description:
+          "When unchecked, the Nos pôles page, its navigation links, the homepage teaser and the pôle choice in the join form are hidden. Pôles data stays editable.",
+      },
+    },
   ],
 };

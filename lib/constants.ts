@@ -10,6 +10,14 @@ export const NAV_LINKS = [
   { href: "/rejoindre", label: "Rejoindre" },
 ] as const;
 
+export const POLES_HREF = "/nos-poles";
+
+export function getNavLinks(polesSectionEnabled: boolean) {
+  return polesSectionEnabled
+    ? NAV_LINKS
+    : NAV_LINKS.filter((link) => link.href !== POLES_HREF);
+}
+
 export const LEGAL_LINKS = [
   { href: "/mentions-legales", label: "Mentions légales" },
   { href: "/confidentialite", label: "Politique de confidentialité" },

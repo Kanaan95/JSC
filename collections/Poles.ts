@@ -8,6 +8,8 @@ export const Poles: CollectionConfig = {
   slug: "poles",
   admin: {
     useAsTitle: "name",
+    description:
+      "This section is currently hidden from the public website. Toggle polesSectionEnabled in Site Settings to show it again.",
   },
   access: {
     // Public read access — this content powers the public "Nos pôles" page.

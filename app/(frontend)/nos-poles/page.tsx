@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/page-hero";
@@ -8,6 +9,7 @@ import { PoleMobileTabs } from "@/components/nos-poles/pole-nav";
 import { PoleSection } from "@/components/nos-poles/pole-section";
 import { getPayloadClient } from "@/lib/payload";
 import type { PoleDoc } from "@/lib/payload-types";
+import { getPolesSectionEnabled } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "Nos pôles",
@@ -16,6 +18,10 @@ export const metadata: Metadata = {
 };
 
 export default async function NosPolesPage() {
+  if (!(await getPolesSectionEnabled())) {
+    notFound();
+  }
+
   const payload = await getPayloadClient();
   const { docs: poles } = (await payload.find({
     collection: "poles",

@@ -46,13 +46,18 @@ export default async function RootLayout({
     payload.findGlobal({ slug: "site-settings" }) as Promise<SiteSettingsGlobal>,
     payload.findGlobal({ slug: "footer-settings" }) as Promise<FooterSettingsGlobal>,
   ]);
+  const polesSectionEnabled = siteSettings.polesSectionEnabled === true;
 
   return (
     <html lang="fr" className={`${cormorantGaramond.variable} ${inter.variable}`}>
       <body className="flex min-h-screen flex-col font-body">
-        <Header />
+        <Header polesSectionEnabled={polesSectionEnabled} />
         <main className="flex-1">{children}</main>
-        <Footer siteSettings={siteSettings} footerSettings={footerSettings} />
+        <Footer
+          siteSettings={siteSettings}
+          footerSettings={footerSettings}
+          polesSectionEnabled={polesSectionEnabled}
+        />
       </body>
     </html>
   );

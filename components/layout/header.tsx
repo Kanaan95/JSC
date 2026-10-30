@@ -2,9 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { NAV_LINKS, SITE_SHORT_NAME } from "@/lib/constants";
+import { getNavLinks, SITE_SHORT_NAME } from "@/lib/constants";
 
-export function Header() {
+interface HeaderProps {
+  polesSectionEnabled: boolean;
+}
+
+export function Header({ polesSectionEnabled }: HeaderProps) {
+  const links = getNavLinks(polesSectionEnabled);
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="container flex h-24 items-center justify-between">
@@ -19,7 +25,7 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
+          {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -30,7 +36,7 @@ export function Header() {
           ))}
         </nav>
 
-        <MobileNav />
+        <MobileNav links={links} />
       </div>
     </header>
   );
