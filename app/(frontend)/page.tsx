@@ -18,7 +18,10 @@ export default async function HomePage() {
     payload.findGlobal({ slug: "homepage" }) as Promise<HomepageGlobal>,
     payload.find({
       collection: "events",
-      where: { featured: { equals: true } },
+      where: {
+        featured: { equals: true },
+        status: { equals: "published" },
+      },
       sort: "date",
       limit: 1,
       depth: 0,

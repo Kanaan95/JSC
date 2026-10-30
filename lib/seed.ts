@@ -200,7 +200,11 @@ interface TeamMemberSeed {
 }
 
 const TEAM_SEED: TeamMemberSeed[] = [
-  { name: "Edwin Lattouf", role: "Président · Responsable recrutement", order: 1 },
+  {
+    name: "Edwin Lattouf",
+    role: "Président · Responsable recrutement",
+    order: 1,
+  },
   { name: "Ralph Saade", role: "Adjoint · Secrétaire", order: 2 },
   { name: "Karine Chahine", role: "Trésorière", order: 3 },
   { name: "Célina Mitri", role: "Responsable logistique", order: 4 },
@@ -334,7 +338,11 @@ async function seedPoles(payload: Payload): Promise<Map<string, number>> {
     };
 
     if (existing.docs[0]) {
-      await payload.update({ collection: "poles", id: existing.docs[0].id, data });
+      await payload.update({
+        collection: "poles",
+        id: existing.docs[0].id,
+        data,
+      });
       poleIdByName.set(pole.name, existing.docs[0].id as number);
     } else {
       const created = await payload.create({ collection: "poles", data });
@@ -373,7 +381,10 @@ async function seedTeamMembers(
       });
       teamMemberIdByName.set(member.name, existing.docs[0].id as number);
     } else {
-      const created = await payload.create({ collection: "team-members", data });
+      const created = await payload.create({
+        collection: "team-members",
+        data,
+      });
       teamMemberIdByName.set(member.name, created.id as number);
     }
   }
@@ -426,9 +437,19 @@ async function seedEvents(payload: Payload) {
     };
 
     if (existing.docs[0]) {
-      await payload.update({ collection: "events", id: existing.docs[0].id, data });
+      await payload.update({
+        collection: "events",
+        id: existing.docs[0].id,
+        data: { ...data, status: "published" },
+      });
     } else {
-      await payload.create({ collection: "events", data });
+      // Creation is always forced to draft, so publish in a second step.
+      const created = await payload.create({ collection: "events", data });
+      await payload.update({
+        collection: "events",
+        id: created.id,
+        data: { status: "published" },
+      });
     }
   }
 }

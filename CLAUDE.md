@@ -40,20 +40,13 @@ Construire une communauté ancrée dans la foi chrétienne, enracinée dans la t
 - **Ouverture et transmission** — dialogue entre cultures et générations
 
 ### Team (Organisation)
-- Président: Edwin Lattouf
-- Adjoint / Secrétaire: Ralph Saade
-- Trésorière: Karine Chahine
-- Responsable logistique: Célina Mitri
-- Responsable communication: Joe Khairallah
-- Responsable relations publiques: Philippe Bou Hanna
-- Événements culturels & artistiques: Evelyne Helo
-- Événements sportifs: Elie Habre
-- Événements humanitaires: Elias Bou Ghosn
-- Événements sociaux: Peter Daoura
-- Responsable animation: Clara Antoinetta Elias
-- Responsables activités spirituelles: Laura Azar / Rita Francis
-- Responsable solidarité: Eleonora Abi Rached
-- Responsable recrutement: Edwin Lattouf
+- Président: Ralph Saade
+- Adjoint au responsable: Charbel Yahchouchi
+- Secrétaire: Clara Elias
+- Trésorière: Gaelle Ziade
+- Responsable communication: Rami Kanaan
+- Responsables activités spirituelles: Laura Azar
+- Événements activites para-spirituelles: Elie Habre
 
 ***
 
@@ -121,32 +114,32 @@ Construire une communauté ancrée dans la foi chrétienne, enracinée dans la t
 
 ### Main Logos (use appropriate variant per context)
 
-| File | Description | Use when |
-|---|---|---|
-| `Logo-JSC-complet-marine-fond-blanc.jpg` | Full logo (boat+JSC+text), navy on white | Main logo, footer, about page |
-| `JSC-Nice-marine-transparent.jpg` | "JSC NICE" wordmark, navy, transparent bg | Light backgrounds |
-| `JSC-Nice-blanc-fond-marine.jpg` | "JSC NICE" wordmark, white on navy | Dark/navy backgrounds |
-| `barque-blanche-transparent.jpg` | Boat icon only, white, transparent bg | Small icon use on dark bg |
-| `barque-blanche-JSC-texte-transparent.jpg` | Boat + JSC text, white, transparent bg | Hero overlays |
-| `comite-marine-transparent.jpg` | "JSC COMITÉ" lockup, navy | Comité/team section |
-| `flamme-croix-marine-transparent.jpg` | Flame+cross icon, navy, transparent bg | Favicon, small icon on light bg |
-| `flamme-croix-blanche-transparent.jpg` | Flame+cross icon, white, transparent bg | Small icon on dark bg |
-| `flamme-croix-blanc-fond-marine-12.svg` | SVG flame+cross, white on navy | Scalable icon on navy bg |
-| `flamme-croix-marine-fond-transparent-14.svg` | SVG flame+cross, navy, transparent | Scalable icon on light bg |
-| `flamme-croix-blanc-fond-transparent-13.svg` | SVG flame+cross, white, transparent | Scalable icon on any dark bg |
+| File                                          | Description                               | Use when                        |
+| --------------------------------------------- | ----------------------------------------- | ------------------------------- |
+| `Logo-JSC-complet-marine-fond-blanc.jpg`      | Full logo (boat+JSC+text), navy on white  | Main logo, footer, about page   |
+| `JSC-Nice-marine-transparent.jpg`             | "JSC NICE" wordmark, navy, transparent bg | Light backgrounds               |
+| `JSC-Nice-blanc-fond-marine.jpg`              | "JSC NICE" wordmark, white on navy        | Dark/navy backgrounds           |
+| `barque-blanche-transparent.jpg`              | Boat icon only, white, transparent bg     | Small icon use on dark bg       |
+| `barque-blanche-JSC-texte-transparent.jpg`    | Boat + JSC text, white, transparent bg    | Hero overlays                   |
+| `comite-marine-transparent.jpg`               | "JSC COMITÉ" lockup, navy                 | Comité/team section             |
+| `flamme-croix-marine-transparent.jpg`         | Flame+cross icon, navy, transparent bg    | Favicon, small icon on light bg |
+| `flamme-croix-blanche-transparent.jpg`        | Flame+cross icon, white, transparent bg   | Small icon on dark bg           |
+| `flamme-croix-blanc-fond-marine-12.svg`       | SVG flame+cross, white on navy            | Scalable icon on navy bg        |
+| `flamme-croix-marine-fond-transparent-14.svg` | SVG flame+cross, navy, transparent        | Scalable icon on light bg       |
+| `flamme-croix-blanc-fond-transparent-13.svg`  | SVG flame+cross, white, transparent       | Scalable icon on any dark bg    |
 
 ### Pole / Axe Logos
 
-| Axe | File |
-|---|---|
-| Spirituel | `spirituel logo.png`|
-| Solidaire | `solidaire logo.png`|
-| After Mass | `after mass logo.png`|
-| Culturel | `culture logo.png`|
-| Sportif | `sport logo.png`|
-| Social | `social logo.png`| 
-| Humanitaire | `humain logo.png`| 
-| Animation | `animation logo.png`| 
+| Axe         | File                  |
+| ----------- | --------------------- |
+| Spirituel   | `spirituel logo.png`  |
+| Solidaire   | `solidaire logo.png`  |
+| After Mass  | `after mass logo.png` |
+| Culturel    | `culture logo.png`    |
+| Sportif     | `sport logo.png`      |
+| Social      | `social logo.png`     |
+| Humanitaire | `humain logo.png`     |
+| Animation   | `animation logo.png`  |
 
 > **Note:** Poles marked ⚠️ are missing dedicated logos. Use the flame+cross as a placeholder and add a TODO comment. Replace when assets are provided.
 
@@ -318,11 +311,11 @@ Revisit only if the team requests frequent edits to that page.
 
 ### Access Control / Roles
 
-| Role | Read | Create | Update | Delete |
-|---|---|---|---|---|
-| super-admin | All | All | All | All |
-| editor | All | Events, Posts, TeamMembers | Events, Posts, TeamMembers | Events, Posts |
-| content-manager | All | Posts only | Own posts only | Own posts only |
+| Role            | Read | Create                     | Update                     | Delete         |
+| --------------- | ---- | -------------------------- | -------------------------- | -------------- |
+| super-admin     | All  | All                        | All                        | All            |
+| editor          | All  | Events, Posts, TeamMembers | Events, Posts, TeamMembers | Events, Posts  |
+| content-manager | All  | Posts only                 | Own posts only             | Own posts only |
 
 Implement via a reusable `checkRole.ts` utility in `/access` — do not duplicate
 access logic across collection configs.

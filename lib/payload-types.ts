@@ -3,6 +3,8 @@
 // so these cover only the fields the frontend actually consumes.
 import type { SerializedEditorState } from "lexical";
 
+import type { EventStatus } from "./event-status";
+
 export type RichTextValue = SerializedEditorState | null | undefined;
 
 export interface MediaDoc {
@@ -52,6 +54,7 @@ export interface EventDoc {
   image?: MediaDoc | number | null;
   registrationLink?: string | null;
   featured?: boolean | null;
+  status: EventStatus;
 }
 
 export interface HomepageGlobal {

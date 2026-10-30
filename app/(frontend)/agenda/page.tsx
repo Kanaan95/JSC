@@ -57,6 +57,7 @@ export default async function AgendaPage() {
   const payload = await getPayloadClient();
   const { docs } = (await payload.find({
     collection: "events",
+    where: { status: { equals: "published" } },
     sort: "date",
     limit: 200,
     depth: 0,

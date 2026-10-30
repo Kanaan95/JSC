@@ -52,7 +52,10 @@ export default async function RejoindrePage({
         ? payload
           .find({
             collection: "events",
-            where: { slug: { equals: eventSlug } },
+            where: {
+              slug: { equals: eventSlug },
+              status: { equals: "published" },
+            },
             limit: 1,
             depth: 0,
           })
