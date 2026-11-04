@@ -11,9 +11,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NAV_LINKS } from "@/lib/constants";
+interface MobileNavProps {
+  links: readonly { href: string; label: string }[];
+}
 
-export function MobileNav() {
+export function MobileNav({ links }: MobileNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -31,7 +33,7 @@ export function MobileNav() {
       <SheetContent side="right">
         <SheetTitle className="sr-only">Menu de navigation</SheetTitle>
         <nav className="mt-8 flex flex-col gap-6">
-          {NAV_LINKS.map((link) => (
+          {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}

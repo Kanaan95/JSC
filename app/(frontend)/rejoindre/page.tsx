@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { RichText } from "@payloadcms/richtext-lexical/react";
 
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
@@ -7,8 +8,12 @@ import { MembershipForm } from "@/components/rejoindre/membership-form";
 import { NewsletterSignup } from "@/components/rejoindre/newsletter-signup";
 import { SocialLinks } from "@/components/rejoindre/social-links";
 import { WhatsappCta } from "@/components/rejoindre/whatsapp-cta";
-import { POLES } from "@/lib/constants";
-import { EVENTS } from "@/lib/events";
+import { getPayloadClient } from "@/lib/payload";
+import type {
+  ContactPageGlobal,
+  PoleDoc,
+  SiteSettingsGlobal,
+} from "@/lib/payload-types";
 
 export const metadata: Metadata = {
   title: "Rejoindre",
@@ -17,17 +22,52 @@ export const metadata: Metadata = {
 };
 
 interface RejoindrePageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function RejoindrePage({ searchParams }: RejoindrePageProps) {
+export default async function RejoindrePage({
+  searchParams,
+}: RejoindrePageProps) {
+  const resolvedSearchParams = await searchParams;
   const poleSlug =
-    typeof searchParams.pole === "string" ? searchParams.pole : undefined;
+    typeof resolvedSearchParams.pole === "string"
+      ? resolvedSearchParams.pole
+      : undefined;
   const eventSlug =
-    typeof searchParams.event === "string" ? searchParams.event : undefined;
+    typeof resolvedSearchParams.event === "string"
+      ? resolvedSearchParams.event
+      : undefined;
 
-  const defaultPole = POLES.find((pole) => pole.slug === poleSlug)?.slug;
-  const matchedEvent = EVENTS.find((event) => event.slug === eventSlug);
+  const payload = await getPayloadClient();
+  const [contactPage, siteSettings, matchedEvent] = await Promise.all([
+    payload.findGlobal({ slug: "contact-page" }) as Promise<ContactPageGlobal>,
+    payload.findGlobal({ slug: "site-settings" }) as Promise<SiteSettingsGlobal>,
+    eventSlug
+      ? payload
+        .find({
+          collection: "events",
+          where: {
+            slug: { equals: eventSlug },
+            status: { equals: "published" },
+          },
+          limit: 1,
+          depth: 0,
+        })
+        .then((result) => result.docs[0] ?? null)
+      : Promise.resolve(null),
+  ]);
+
+  const polesSectionEnabled = siteSettings.polesSectionEnabled === true;
+  const poles = polesSectionEnabled
+    ? ((
+      (await payload.find({
+        collection: "poles",
+        limit: 100,
+        depth: 0,
+      })) as unknown as { docs: PoleDoc[] }
+    ).docs)
+    : [];
+  const defaultPole = poles.find((pole) => pole.slug === poleSlug)?.slug;
   const defaultMessage = matchedEvent
     ? `Je souhaite m'inscrire à : ${matchedEvent.title}`
     : undefined;
@@ -46,12 +86,19 @@ export default function RejoindrePage({ searchParams }: RejoindrePageProps) {
           <h2 className="font-heading text-3xl font-semibold text-foreground sm:text-4xl">
             Formulaire d&apos;adhésion
           </h2>
-          <p className="mt-3 text-foreground-muted">
-            Quelques informations suffisent pour démarrer : nous revenons vers
-            toi rapidement pour t&apos;accueillir.
-          </p>
+          {contactPage.formIntroText ? (
+            <div className="mt-3 text-foreground-muted">
+              <RichText data={contactPage.formIntroText} disableContainer />
+            </div>
+          ) : (
+            <p className="mt-3 text-foreground-muted">
+              Quelques informations suffisent pour démarrer : nous revenons vers
+              toi rapidement pour t&apos;accueillir.
+            </p>
+          )}
           <div className="mt-10">
             <MembershipForm
+              poles={poles}
               defaultPole={defaultPole}
               defaultMessage={defaultMessage}
             />
@@ -80,7 +127,11 @@ export default function RejoindrePage({ searchParams }: RejoindrePageProps) {
             Nous rencontrer
           </h2>
           <div className="mt-10">
-            <ContactInfo />
+            <ContactInfo
+              address={contactPage.address}
+              mapEmbedUrl={contactPage.mapEmbedUrl}
+              whatsappNumber={siteSettings.whatsappNumber}
+            />
           </div>
         </Reveal>
       </section>

@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
 import { CONTACT } from "@/lib/constants";
 
-export function WhatsappCta() {
+interface WhatsappCtaProps {
+  whatsappUrl?: string | null;
+}
+
+export function WhatsappCta({ whatsappUrl }: WhatsappCtaProps) {
   return (
     <section className="bg-[#25D366]/[0.06] py-20">
       <Reveal className="container flex flex-col items-start gap-6">
@@ -19,7 +23,7 @@ export function WhatsappCta() {
           size="lg"
           className="bg-[#25D366] text-white transition-transform duration-300 hover:-translate-y-0.5 hover:bg-[#1DA851]"
         >
-          <a href={CONTACT.whatsappUrl} target="_blank" rel="noreferrer">
+          <a href={whatsappUrl || CONTACT.whatsappUrl} target="_blank" rel="noreferrer">
             Rejoindre le groupe WhatsApp
           </a>
         </Button>

@@ -1,12 +1,16 @@
-import { POLES } from "@/lib/constants";
+import type { PoleDoc } from "@/lib/payload-types";
 
-export function PoleSideNav() {
+interface PoleNavProps {
+  poles: PoleDoc[];
+}
+
+export function PoleSideNav({ poles }: PoleNavProps) {
   return (
     <nav
       aria-label="Navigation des pôles"
       className="fixed left-6 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 lg:flex"
     >
-      {POLES.map((pole) => (
+      {poles.map((pole) => (
         <a
           key={pole.slug}
           href={`#${pole.slug}`}
@@ -20,13 +24,13 @@ export function PoleSideNav() {
   );
 }
 
-export function PoleMobileTabs() {
+export function PoleMobileTabs({ poles }: PoleNavProps) {
   return (
     <nav
       aria-label="Navigation des pôles"
       className="sticky top-24 z-30 flex gap-2 overflow-x-auto border-b border-border bg-background/95 px-4 py-3 backdrop-blur lg:hidden"
     >
-      {POLES.map((pole) => (
+      {poles.map((pole) => (
         <a
           key={pole.slug}
           href={`#${pole.slug}`}

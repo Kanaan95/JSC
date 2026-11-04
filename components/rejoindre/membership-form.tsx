@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { POLES } from "@/lib/constants";
+import type { PoleDoc } from "@/lib/payload-types";
 
 const membershipSchema = z.object({
   firstName: z.string().trim().min(1, "Le prénom est requis."),
@@ -34,11 +34,13 @@ type MembershipFormInput = z.input<typeof membershipSchema>;
 type MembershipFormOutput = z.output<typeof membershipSchema>;
 
 interface MembershipFormProps {
+  poles: PoleDoc[];
   defaultPole?: string;
   defaultMessage?: string;
 }
 
 export function MembershipForm({
+  poles,
   defaultPole,
   defaultMessage,
 }: MembershipFormProps) {
@@ -173,27 +175,29 @@ export function MembershipForm({
         </div>
       </div>
 
-      <fieldset className="flex flex-col gap-3">
-        <legend className="text-sm font-medium text-foreground">
-          Pôle d&apos;intérêt
-        </legend>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {POLES.map((pole) => (
-            <label
-              key={pole.slug}
-              htmlFor={`pole-${pole.slug}`}
-              className="flex cursor-pointer items-center gap-2 text-sm text-foreground-muted"
-            >
-              <Checkbox
-                id={`pole-${pole.slug}`}
-                value={pole.slug}
-                {...register("poles")}
-              />
-              {pole.name}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      {poles.length > 0 ? (
+        <fieldset className="flex flex-col gap-3">
+          <legend className="text-sm font-medium text-foreground">
+            Pôle d&apos;intérêt
+          </legend>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {poles.map((pole) => (
+              <label
+                key={pole.slug}
+                htmlFor={`pole-${pole.slug}`}
+                className="flex cursor-pointer items-center gap-2 text-sm text-foreground-muted"
+              >
+                <Checkbox
+                  id={`pole-${pole.slug}`}
+                  value={pole.slug}
+                  {...register("poles")}
+                />
+                {pole.name}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="message">Message</Label>

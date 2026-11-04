@@ -1,0 +1,10 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "/^npm view next versions --json \\| node -e \"const v=JSON\\.parse\\(require\\('fs'\\)\\.readFileSync\\(0,'utf8'\\)\\); console\\.log\\(v\\.filter\\(x=>/\\^15\\\\\\.\\\\d\\+\\\\\\.\\\\d\\+\\$/\\.test\\(x\\)\\)\\.slice\\(-5\\)\\.join\\('\\\\n'\\)\\)\"$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "npx create-payload-app@latest": true,
+    "npm install": true
+  }
+}
