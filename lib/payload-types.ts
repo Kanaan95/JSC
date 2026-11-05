@@ -8,7 +8,7 @@ import type { EventStatus } from "./event-status";
 export type RichTextValue = SerializedEditorState | null | undefined;
 
 export interface MediaDoc {
-  id: number;
+  id: string;
   url?: string | null;
   alt: string;
 }
@@ -22,28 +22,28 @@ export type EventCategory =
   | "after-mass";
 
 export interface TeamMemberDoc {
-  id: number;
+  id: string;
   name: string;
   role?: string | null;
-  pole?: PoleDoc | number | null;
-  photo?: MediaDoc | number | null;
+  pole?: PoleDoc | string | null;
+  photo?: MediaDoc | string | null;
   bio?: RichTextValue;
   order?: number | null;
 }
 
 export interface PoleDoc {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   mission?: RichTextValue;
-  responsable?: TeamMemberDoc | number | null;
-  logo?: MediaDoc | number | null;
+  responsable?: TeamMemberDoc | string | null;
+  logo?: MediaDoc | string | null;
   activities?: { activity: string }[] | null;
   color?: string | null;
 }
 
 export interface EventDoc {
-  id: number;
+  id: string;
   title: string;
   slug: string;
   date: string;
@@ -51,7 +51,7 @@ export interface EventDoc {
   location?: string | null;
   category: EventCategory;
   description?: RichTextValue;
-  image?: MediaDoc | number | null;
+  image?: MediaDoc | string | null;
   registrationLink?: string | null;
   featured?: boolean | null;
   status: EventStatus;
@@ -72,7 +72,7 @@ export interface ContactPageGlobal {
 }
 
 export interface SiteSettingsGlobal {
-  logo?: MediaDoc | number | null;
+  logo?: MediaDoc | string | null;
   socialLinks?:
     | {
         platform: "instagram" | "facebook" | "whatsapp" | "tiktok" | "youtube";

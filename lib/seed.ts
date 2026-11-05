@@ -318,8 +318,8 @@ async function seedSiteSettings(payload: Payload) {
   });
 }
 
-async function seedPoles(payload: Payload): Promise<Map<string, number>> {
-  const poleIdByName = new Map<string, number>();
+async function seedPoles(payload: Payload): Promise<Map<string, string>> {
+  const poleIdByName = new Map<string, string>();
 
   for (const pole of POLES_SEED) {
     const slug = slugify(pole.name);
@@ -343,10 +343,10 @@ async function seedPoles(payload: Payload): Promise<Map<string, number>> {
         id: existing.docs[0].id,
         data,
       });
-      poleIdByName.set(pole.name, existing.docs[0].id as number);
+      poleIdByName.set(pole.name, String(existing.docs[0].id));
     } else {
       const created = await payload.create({ collection: "poles", data });
-      poleIdByName.set(pole.name, created.id as number);
+      poleIdByName.set(pole.name, String(created.id));
     }
   }
 
@@ -355,9 +355,9 @@ async function seedPoles(payload: Payload): Promise<Map<string, number>> {
 
 async function seedTeamMembers(
   payload: Payload,
-  poleIdByName: Map<string, number>,
-): Promise<Map<string, number>> {
-  const teamMemberIdByName = new Map<string, number>();
+  poleIdByName: Map<string, string>,
+): Promise<Map<string, string>> {
+  const teamMemberIdByName = new Map<string, string>();
 
   for (const member of TEAM_SEED) {
     const existing = await payload.find({
@@ -379,13 +379,13 @@ async function seedTeamMembers(
         id: existing.docs[0].id,
         data,
       });
-      teamMemberIdByName.set(member.name, existing.docs[0].id as number);
+      teamMemberIdByName.set(member.name, String(existing.docs[0].id));
     } else {
       const created = await payload.create({
         collection: "team-members",
         data,
       });
-      teamMemberIdByName.set(member.name, created.id as number);
+      teamMemberIdByName.set(member.name, String(created.id));
     }
   }
 
@@ -394,8 +394,8 @@ async function seedTeamMembers(
 
 async function linkPoleResponsables(
   payload: Payload,
-  poleIdByName: Map<string, number>,
-  teamMemberIdByName: Map<string, number>,
+  poleIdByName: Map<string, string>,
+  teamMemberIdByName: Map<string, string>,
 ) {
   for (const pole of POLES_SEED) {
     if (!pole.responsableName) {
